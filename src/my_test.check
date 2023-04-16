@@ -1,0 +1,315 @@
+#include <check.h>
+#include <math.h>
+#include "my_math.h"
+
+#define BIG_NUM 1e+15
+#define TOLERANCE 1e-6
+
+double x[47] = {
+    1e-10, 1e10, 1e-20, 10000, -10000, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5,
+    -0.25, -0.00001, -0.0001, -0.001, -0.01, -0.1, 0, 0.1, 0.01, 0.001, 0.0001,
+    0.00001, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2,
+    NAN, INFINITY, DBL_MIN, M_PI, -M_PI, M_PI / 2, -M_PI / 2, M_PI / 3,
+    -M_PI / 3, M_PI / 4, -M_PI / 4, M_PI / 6, -M_PI / 6};
+
+
+#test test_my_abs
+
+int number = -555;
+
+for (int i = 0; i < 100000; i++) {
+    ck_assert_int_eq(my_abs(number), abs(number));
+    number += 1;
+}
+
+#test-loop(0, 27) my_acos_test
+    double t = x[_i];
+    long double exp = acosl(t);
+    long double act = my_acos(t);
+    if (isnan(exp)) {
+        ck_assert(isnan(act));
+    } else {
+        ck_assert_double_eq_tol(act, exp, TOLERANCE);
+    }
+
+#test-loop(0, 47) my_asin_test
+    double t = x[_i];
+    long double exp = asinl(t);
+    long double act = my_asin(t);
+    if (isnan(exp)) {
+        ck_assert(isnan(act));
+    } else {
+        ck_assert_double_eq_tol(act, exp, TOLERANCE);
+    }
+
+
+#test-loop(0, 47) my_atan_test
+    double t = x[_i];
+    long double exp = atanl(t);
+    long double act = my_atan(t);
+    if (isnan(exp)) {
+        ck_assert(isnan(act));
+    } else {
+        ck_assert_double_eq_tol(act, exp, TOLERANCE);
+    }
+
+
+#test test_my_ceil
+
+double arg = -13.5;
+    ck_assert_int_eq(my_ceil(arg), ceil(arg));
+
+double arg2 = -13.351;
+    ck_assert_int_eq(my_ceil(arg2), ceil(arg2));
+
+double arg3 = 0.5;
+    ck_assert_int_eq(my_ceil(arg3), ceil(arg3));
+
+double arg4 = 0;
+    ck_assert_int_eq(my_ceil(arg4), ceil(arg4));
+
+double nan = my_NAN;
+    double ninf = -my_INFINITY;
+    double inf = my_INFINITY;
+    int nanarg = isnan(ceil(nan));
+    int nanarg2 = isnan(my_ceil(nan));
+    ck_assert_int_eq(nanarg, nanarg2);
+    ck_assert_int_eq(my_ceil(nan), ceil(nan));
+    ck_assert_int_eq(my_ceil(ninf), ceil(ninf));
+    ck_assert_int_eq(my_ceil(inf), ceil(inf));
+
+
+#test test_my_cos
+
+double n = 0;
+
+for (int i = 0; i < 320; i++) {
+    ck_assert_double_eq_tol(my_cos(n), cos(n), EPS_6);
+    n += 0.01;
+}
+
+
+#test test_my_exp
+
+double power = -1.345642;
+for (int i = 0; i < 1000; i++) {
+    ck_assert_ldouble_eq_tol(my_exp(power), exp(power), 1e-7);
+    power += 0.000001;
+}
+
+power = 0;
+ck_assert_ldouble_eq_tol(my_exp(power), exp(power), 1e-7);
+
+power = 1.345642;
+for (int i = 0; i < 1000; i++) {
+    ck_assert_ldouble_eq_tol(my_exp(power), exp(power), 1e-7);
+    power += 0.000001;
+}
+
+power = 30;
+ck_assert_ldouble_eq_tol(my_exp(power), exp(power), 1e-3);    
+
+power = 45;
+ck_assert_ldouble_eq_tol(my_exp(power), exp(power), 1e+4);  
+
+
+#test test_my_fabs
+
+double number = -1.345642;
+for (int i = 0; i < 100000; i++) {
+    ck_assert_ldouble_eq(my_fabs(number), fabsl(number));
+    number += 0.000001;
+}
+
+number = 0;
+ck_assert_ldouble_eq(my_fabs(number), fabsl(number));
+
+number = 1.345642;
+for (int i = 0; i < 1000; i++) {
+    ck_assert_ldouble_eq(my_fabs(number), fabsl(number));
+    number += 0.000001;
+}
+
+
+#test test_my_floor
+
+double arg = -13.5;
+    ck_assert_int_eq(my_floor(arg), floor(arg));
+
+double arg2 = -13.351;
+    ck_assert_int_eq(my_floor(arg2), floor(arg2));
+
+double arg3 = 0.5;
+    ck_assert_int_eq(my_floor(arg3), floor(arg3));
+
+double arg4 = 0;
+    ck_assert_int_eq(my_floor(arg4), floor(arg4));
+    double nan = my_NAN;
+    double ninf = -my_INFINITY;
+    double inf = my_INFINITY;
+    int nanarg = isnan(floor(nan));
+    int nanarg2 = isnan(my_floor(nan));
+    ck_assert_int_eq(nanarg, nanarg2);
+    ck_assert_int_eq(my_floor(nan), floor(nan));
+    ck_assert_int_eq(my_floor(ninf), floor(ninf));
+    ck_assert_int_eq(my_floor(inf), floor(inf));
+
+#test test_my_fmod
+
+    double res1 = 13.1;
+    double res2 = 13.1345;
+    ck_assert_int_eq(my_fmod(res1, res2), fmod(res1, res2));
+
+    double res3 = -13.1;
+    double res4 = -13.1345;
+    ck_assert_int_eq(my_fmod(res3, res4), fmod(res3, res4));
+
+    double res5 = 13.1;
+    double res6 = 0;
+    ck_assert_int_eq(my_fmod(res5, res6), fmod(res5, res6));
+
+    double res7 = +0;
+    double res8 = -0;
+    ck_assert_int_eq(my_fmod(res7, res8), fmod(res7, res8));
+
+    double res9 = 0;
+    double res10 = INFINITY;
+    ck_assert_int_eq(my_fmod(res9, res10), fmod(res9, res10));
+
+    double res11 = NAN;
+    double res12 = NAN;
+    ck_assert_int_eq(my_fmod(res11, res12), fmod(res11, res12));
+
+    double res13 = 13;
+    double res14 = -INFINITY;
+    ck_assert_int_eq(my_fmod(res13, res14), fmod(res13, res14));
+
+    double res15 = +INFINITY;
+    double res16 = 13;
+    ck_assert_int_eq(my_fmod(res15, res16), fmod(res15, res16));
+
+    double res17 = +0;
+    double res18 = 13;
+    ck_assert_int_eq(my_fmod(res17, res18), fmod(res17, res18));
+
+    double res19 = 1e19;
+    double res20 = 10;
+    ck_assert_int_eq(my_fmod(res19, res20), fmod(res19, res20));
+
+
+#test test_my_log
+
+double number = -25.456;
+for (int i = 0; i < 25455; i++) {
+    ck_assert(isnan(my_log(number)));
+    number += 0.001;
+}
+
+number = 0.0;
+ck_assert(isinf(my_log(number)));
+
+number = 10;
+for (int i = 0; i < 1000; i++) {
+    ck_assert_ldouble_eq_tol(my_log(number), logl(number), 1e-7);
+    number += 0.1;
+}
+
+
+#test test_my_pow
+
+double base = 3.52;
+double power = -1.345642;
+for (int i = 0; i < 100; i++) {
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-7);
+    power += 0.001;
+}
+
+base = 0.0;
+power = 1.345642;
+for (int i = 0; i < 100; i++) {
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-7);
+    power += 0.001;
+}
+
+base = -0.0;
+power = 1.345642;
+for (int i = 0; i < 100; i++) {
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-7);
+    power += 0.001;
+}
+
+base = 3.57;
+power = 0.0;
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-7);
+
+base = 0.0;
+power = 0.0;
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-7);
+
+base = 3.57;
+power = -5;
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-7);
+
+base = -3.57;
+power = 0.001;
+for (int i = 0; i < 100; i++) {
+    ck_assert(isnan(my_pow(base, power)));
+    power += 0.001;
+}
+
+base = 143.52;
+power = 1.345642;
+for (int i = 0; i < 100; i++) {
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-3);
+    power += 0.001;
+}
+
+base = -1.5;
+power = 30;
+for (int i = 0; i < 100; i++) {
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-3);    
+    base += 0.001;
+}
+
+base = 1.56;
+power = 15;
+for (int i = 0; i < 100; i++) {
+    ck_assert_ldouble_eq_tol(my_pow(base, power), powl(base, power), 1e-3);    
+    power += 0.001;
+}
+
+
+#test test_my_sin
+
+double n = 0;
+for (int i = 0; i < 320; i++) {
+    ck_assert_double_eq_tol(my_sin(n), sin(n), EPS_6);
+    n += 0.01;
+}
+
+
+#test test_my_sqrt
+
+double number = -25.456;
+for (int i = 0; i < 25455; i++) {
+    ck_assert(isnan(my_sqrt(number)));
+    number += 0.001;
+}
+
+number = 0.0;
+ck_assert_ldouble_eq_tol(my_sqrt(number), sqrtl(number), 1e-7);
+
+number = 0.001;
+for (int i = 0; i < 25455; i++) {
+    ck_assert_ldouble_eq_tol(my_sqrt(number), sqrtl(number), 1e-7);
+    number += 0.001;
+}
+
+
+#test test_my_tan
+
+double n = 0;
+for (int i = 0; i < 150; i++) {
+    ck_assert_double_eq_tol(my_tan(n), tan(n), EPS_6);
+    n += 0.01;
+}
